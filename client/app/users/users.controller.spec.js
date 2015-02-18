@@ -3,7 +3,7 @@
 describe('Controller: UsersCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('dimaFunApp'));
+  beforeEach(module('livewordsApp'));
 
   var UsersCtrl, scope;
 

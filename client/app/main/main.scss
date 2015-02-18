@@ -34,7 +34,7 @@
     color: #000000;
     background: #F7F2E0;
     padding: 0px;
-    font-size: 28px;
+    font-size: 20px;
     text-align: center;
     cursor: pointer;
     border-radius: 5px;
@@ -42,7 +42,8 @@
 }
 
 #wordgrid {
-    width: 800px;
+    width: 610px;
     background-image: url("/assets/images/scrabble-board.jpg");
     background-size: contain;
+    background-repeat: no-repeat;
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('dimaFunApp')
+angular.module('livewordsApp')
   .factory('Modal', function ($rootScope, $modal) {
     /**
      * Opens a modal

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('dimaFunApp')
+angular.module('livewordsApp')
   .controller('SettingsCtrl', function ($scope, User, Auth) {
     $scope.errors = {};
 

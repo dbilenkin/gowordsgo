@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('dimaFunApp')
+angular.module('livewordsApp')
   .controller('NavbarCtrl', function ($scope, $location, Auth) {
     $scope.menu = [{
       'title': 'Home',
@@ -8,9 +8,6 @@ angular.module('dimaFunApp')
     },{
     	'title': 'About',
     	'link':'/about'
-    },{
-    	'title': 'Users',
-    	'link':'/users'
     }];
 
     $scope.isCollapsed = true;

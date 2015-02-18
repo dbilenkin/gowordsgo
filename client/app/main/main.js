@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('dimaFunApp')
+angular.module('livewordsApp')
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {

@@ -7,28 +7,6 @@ var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
 var Tile = require('../api/tile/tile.model');
 
-Tile.find({}).remove(function() {
-
-	function getRandomLetter() {
-		return String.fromCharCode(65 + Math.floor(Math.random() * 26));
-	}
-
-	
-	for (var i = 0; i < 1; i++) {
-		for (var j = 0; j < 7; j++) {
-			Tile.create({
-				sizeX : 1,
-				sizeY : 1,
-				row : i,
-				col : j,
-				content : getRandomLetter()
-			});
-		}
-	}
-
-
-});
-
 Thing.find({}).remove(function() {
 	Thing.create({
 		name : 'Development Tools',

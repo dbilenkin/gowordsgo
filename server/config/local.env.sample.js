@@ -7,7 +7,7 @@
 
 module.exports = {
   DOMAIN:           'http://localhost:9000',
-  SESSION_SECRET:   'dimafun-secret',
+  SESSION_SECRET:   'livewords-secret',
 
   FACEBOOK_ID:      'app-id',
   FACEBOOK_SECRET:  'secret',

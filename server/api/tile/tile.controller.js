@@ -42,6 +42,14 @@ exports.update = function(req, res) {
   });
 };
 
+// Deletes all tiles from the DB.
+exports.destroyAll = function(req, res) {
+  Tile.find({}).remove(function(err) {
+      if(err) { return handleError(res, err); }
+      return res.send(204);
+    });
+};
+
 // Deletes a tile from the DB.
 exports.destroy = function(req, res) {
   Tile.findById(req.params.id, function (err, tile) {

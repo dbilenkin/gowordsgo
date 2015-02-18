@@ -3,7 +3,7 @@
 /**
  * Removes server error when user updates input
  */
-angular.module('dimaFunApp')
+angular.module('livewordsApp')
   .directive('mongooseError', function () {
     return {
       restrict: 'A',

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('dimaFunApp')
+angular.module('livewordsApp')
   .controller('UsersCtrl', function ($scope, $http) {
     
     $scope.users = [];

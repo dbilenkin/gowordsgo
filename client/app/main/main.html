@@ -2,20 +2,28 @@
 
 
 <div class="container">
-  
-	<div id="wordgrid" gridster="gridsterOpts">
-        <ul>
-            <li gridster-item="tile" ng-repeat="tile in tiles">
-            	{{tile.content}}
-            </li>
-        </ul>
-    </div>
+	<div class="row">
+		<div class="tray col-lg-3">
+			<button class="btn btn-primary" ng-click="checkWord()">Check Word</button>
+		</div>
+	  
+		<div class="tray col-lg-9" id="wordgrid" gridster="gridsterOpts">
+	        <ul>
+	            <li gridster-item="tile" ng-repeat="tile in tiles">
+	            	{{tile.content}}
+	            </li>
+	        </ul>
+	    </div>
+		
+		
+	</div>
+	
+	
 </div>
 
 <footer class="footer">
   <div class="container">
-      <p>Angular Fullstack v2.0.13 |
-        <a href="https://twitter.com/tyhenkel">@tyhenkel</a> |
-         <a href="https://github.com/DaftMonk/generator-angular-fullstack/issues?state=open">Issues</a></p>
+      <p>Dimitri Bilenkin | 
+        <a href="http://bilenkin.com">bilenkin.com</a></p>
   </div>
 </footer>
