@@ -1,29 +1,44 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
-
 <div class="container">
 	<div class="row">
-		<div class="tray col-lg-3">
-			<button class="btn btn-primary" ng-click="checkWord()">Check Word</button>
+		<div class="col-sm-12">
+			<button class="btn btn-success" ng-click="newGame()">
+				New Game
+			</button>
+			
+			<h3>Select a game below to join:</h3>
+			<table class="table table-striped">
+				<tr>
+					<th>ID</th>
+					<th>Players</th>
+					<th>Board Size</th>
+					<th>Active?</th>
+					<th></th>
+					<th></th>
+				</tr>
+				<tr ng-repeat="game in games">
+					<td>{{game._id}}</td>
+					<td><span ng-repeat="player in game.players">{{player.name}}<span ng-if="!$last">,</span></span></td>
+					<td>{{game.board.length}}</td>
+					<td>{{game.active}}</td>
+					<td><a ng-click="joinGame(game)" href='#'>join</a></td>
+					<td><a ng-click="deleteGame(game)" href='#'>delete</a></td>
+					
+				</tr>
+			</table>
+
 		</div>
-	  
-		<div class="tray col-lg-9" id="wordgrid" gridster="gridsterOpts">
-	        <ul>
-	            <li gridster-item="tile" ng-repeat="tile in tiles">
-	            	{{tile.content}}
-	            </li>
-	        </ul>
-	    </div>
-		
-		
+
+
 	</div>
-	
-	
+
 </div>
 
 <footer class="footer">
-  <div class="container">
-      <p>Dimitri Bilenkin | 
-        <a href="http://bilenkin.com">bilenkin.com</a></p>
-  </div>
+	<div class="container">
+		<p>
+			Dimitri Bilenkin | <a href="http://bilenkin.com">bilenkin.com</a>
+		</p>
+	</div>
 </footer>

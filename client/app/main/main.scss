@@ -29,21 +29,3 @@
     border-top: 1px solid #E5E5E5;
 }
 
-.gridster .gridster-item {
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-    color: #000000;
-    background: #F7F2E0;
-    padding: 0px;
-    font-size: 20px;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 5px;
-    border: 2px solid #000000;
-}
-
-#wordgrid {
-    width: 610px;
-    background-image: url("/assets/images/scrabble-board.jpg");
-    background-size: contain;
-    background-repeat: no-repeat;
-}

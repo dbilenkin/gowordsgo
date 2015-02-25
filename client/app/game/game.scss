@@ -1,0 +1,118 @@
+html, body {
+  overflow: hidden;
+}
+
+.tile {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    color: #000000;
+    background: #F7F2E0;
+    padding: 0px;
+    font-size: 20px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 2px solid #000000;
+    width: 35px;
+    height: 35px;
+    margin: 2px;
+    float: left;
+}
+
+.tile.dragbig {
+  width: 70px;
+  height: 70px;
+  font-size: 40px;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  border: 1px solid black;
+}
+
+
+
+.drop-area {
+
+  background: #dddddd;
+  
+}
+
+.letterpoints {
+  position: absolute;
+  font-size: 12px;
+  right: 0px;
+  top: 16px;
+}
+
+.tile.nodrag {
+  background: #BDBDBD !important;
+}
+
+.special.tw {
+  background: red;
+}
+
+.rack {
+  border: 1px solid black;
+  height: 40px;
+  width: 275px;
+  float: left;
+}
+
+.special.dw {
+  background: #F5A9A9;
+}
+
+.special.tl {
+  background: #08088A;
+}
+
+.special.dl {
+  background: #58ACFA;
+}
+
+#board {
+  width: 600px;
+
+}
+
+#board.dragbig {
+  width: 1200px;
+  height: 1200px;
+}
+
+.player {
+  float: left;
+  margin-left: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.players {
+  float: left;
+  margin-left: 20px;
+  font-size: 12px;
+}
+
+.game-button {
+  float: left;
+  margin: 5px;
+  
+}
+
+.start-button {
+  float: left;
+  margin-left: 15px;
+}
+
+.bottom {
+  margin-bottom: 15px;
+}
+
+.board-container {
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  height: 300px;
+}

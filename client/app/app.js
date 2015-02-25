@@ -7,7 +7,7 @@ angular.module('livewordsApp', [
   'ngRoute',
   'btford.socket-io',
   'ui.bootstrap',
-  'gridster'
+  'ngDragDrop'
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider

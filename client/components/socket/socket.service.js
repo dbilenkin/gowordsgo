@@ -17,6 +17,21 @@ angular.module('livewordsApp')
 
     return {
       socket: socket,
+      
+      /**
+       * syncs just one object
+       */
+      syncUpdatesObject: function (modelName, object, cb) {
+      	cb = cb || angular.noop;
+
+        /**
+         * Syncs item creation/updates on 'model:save'
+         */
+        socket.on(modelName + ':save', function (item) {
+        	var event = 'updated';   	
+        	cb(event, item);
+        });
+      },
 
       /**
        * Register listeners to sync an array with updates on a model
