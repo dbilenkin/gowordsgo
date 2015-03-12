@@ -10,12 +10,16 @@ exports.register = function(socket) {
   Game.schema.post('save', function (doc) {
     onSave(socket, doc);
   });
+  Game.schema.post('update', function (doc) {
+    onSave(socket, doc);
+  });
   Game.schema.post('remove', function (doc) {
     onRemove(socket, doc);
   });
 }
 
 function onSave(socket, doc, cb) {
+  socket.emit('game' + doc._id + ':save', doc);
   socket.emit('game:save', doc);
 }
 

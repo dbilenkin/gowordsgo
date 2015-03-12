@@ -13,6 +13,7 @@ router.patch('/:id', controller.update);
 router.delete('/:id', controller.destroy);
 
 router.put('/:id/board', controller.updateBoard);
-router.put('/:id/bag', controller.updateBag);
+router.put('/:id/swapTiles', controller.swapTiles);
+router.get('/:id/getNewTiles', controller.getNewTiles);
 
 module.exports = router;

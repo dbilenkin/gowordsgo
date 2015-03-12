@@ -1,65 +1,85 @@
-<div ng-include="'components/navbar/navbar.html'"></div>
-
-<div class="container">
+<div class="container" style="padding-left: 0px">
 	<div class="row bottom">
-		<div class="col-xs-12">
-			<div class="row">
-				<button class="btn btn-success start-button" ng-click="startGame()">
-					Start Game
-				</button>
-				<div class="player">
-					{{currentPlayer.name}}: <span class="player-score">{{currentPlayer.score}}</span>
-				</div>
-				<div class="players" ng-hide="isCurrentPlayer(player)" ng-repeat="player in game.players" class="col-xs-12">
-					<div class="player">
-						{{player.name}}: <span class="player-score">{{player.score}}</span>
-					</div>
+		<div class="player">
+			Game: <span class="game-name">{{game.name}}</span>
+		</div>
+		<div class="player">
+			Bag: <span class="game-name">{{game.bag.length}}</span>
+		</div>
+	</div>
+	<div class="row bottom">
+		<div class="player">
+			You: <span class="player-score">{{currentPlayer.score}}</span>
+		</div>
+		<div class="players" ng-hide="isCurrentPlayer(player)" ng-repeat="player in game.players" class="col-xs-12">
+			<div class="player">
+				{{player.name}}: <span class="player-score">{{player.score}}</span>
+			</div>
 
+		</div>
+		<div class="pull-right"></div>
+	</div>
+
+	<div id="board-rack">
+	<div id="board-container" class="bottom">
+		<table draw-special-squares id="board" class="smallboard">
+			<tr ng-repeat="row in game.board track by $index">
+				<td class="cell dragger" ng-repeat="square in row track by $index" data-drop="true"  data-jqyoui-options="{accept:'.tile', hoverClass: 'drop-area'}" jqyoui-droppable="{onDrop:'updateTile($parent.$index,$index)', multiple:false}" ng-model='square' >
+				<div class="tile" data-drag="true" ng-repeat="tile in square track by $index"
+				data-jqyoui-options="boardTileDraggableOptions"
+				jqyoui-draggable="{index: {{$index}}, onStart:'moveTile($parent.$parent.$index,$parent.$index)', onStop:'stopDragging()'}"
+				ng-hide="!tile" ng-model='square'>
+					{{tile.letter}}
+					<div class="letterpoints">
+						{{tile.points}}
+					</div>
+				</div></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div ng-show="game.status == 'started' && currentPlayer">
+
+		<div id="rack" data-drop="true"  data-jqyoui-options="{accept:'.tile:not([ng-model=currentTiles])', greedy: true}" jqyoui-droppable="{onDrop:'updateRack($index)', multiple:true, tolerance: 'touch'}" ng-model="currentTiles">
+			<div class="tile" ng-hide="!tile" data-drag="true" ng-repeat="tile in currentTiles track by $index"
+			data-jqyoui-options="boardTileDraggableOptions" ng-model="currentTiles" jqyoui-draggable="{index: {{$index}}, onStart:'moveFromRack($index)', onStop:'stopDragging()'}">
+				{{tile.letter}}
+				<div class="letterpoints">
+					{{tile.points}}
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="row bottom">
-
-		<div class="board-container">
-			<table draw-special-squares id="board">
-				<tr ng-repeat="row in game.board track by $index">
-					<td class="cell" ng-repeat="square in row track by $index" data-drop="true"  data-jqyoui-options="{accept:'.tile', hoverClass: 'drop-area'}" jqyoui-droppable="{onDrop:'updateTile($parent.$index,$index)', multiple:false}" ng-model='square' >
-					<div class="tile" data-drag="true" ng-repeat="tile in square track by $index" jqyoui-draggable="{index: {{$index}}, onStart:'moveTile($parent.$parent.$index,$parent.$index)'}" ng-hide="!tile" ng-model='square'>
-						{{tile.letter}}
-						<div class="letterpoints">
-							{{tile.points}}
-						</div>
-					</div></td>
-				</tr>
-			</table>
-		</div>
-
 	</div>
-	<div class="row">
-		<div class="col-xs-12">
-
-			<div ng-show="game.active && currentPlayer">
-
-				<div class="rack" data-drop="true"  data-jqyoui-options="{accept:'.tile:not([ng-model=currentTiles])'}" jqyoui-droppable="{onDrop:'updateRack($index)', multiple:true}" ng-model="currentTiles">
-					<div class="tile" ng-hide="!tile" data-drag="true" ng-repeat="tile in currentTiles track by $index"
-					data-jqyoui-options="{revert: 'invalid'}" ng-model="currentTiles" jqyoui-draggable="{index: {{$index}}, onStart:'moveFromRack($index)'}">
-						{{tile.letter}}
-						<div class="letterpoints">
-							{{tile.points}}
-						</div>
-					</div>
-				</div>
-				<button class="btn btn-primary game-button" ng-click="swapTiles()">
+			<div>
+				<a type="button" class="btn btn-default game-button" href="/">
+				  <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+				</a>
+				<button ng-show="game.status == 'started' && currentPlayer" class="btn btn-primary game-button" ng-click="swapTiles()">
 					Swap Tiles
 				</button>
-				<button class="btn btn-primary game-button" ng-click="checkWord()">
-					Submit Word
+				<button ng-show="game.status == 'started' && currentPlayer" class="btn btn-primary game-button" ng-click="shuffleTiles()">
+					Shuffle
 				</button>
-
+				<button ng-show="game.status == 'started' && currentPlayer" class="btn btn-success game-button" ng-click="checkWord()">
+					Go!
+				</button>
 			</div>
 
-		</div>
-	</div>
+
 
 </div>
+
+<script type="text/ng-template" id="errorModalContent.html">
+	<div class="modal-header">
+	<h3 class="modal-title">{{error.label}}</h3>
+	</div>
+	<div class="modal-body">
+	{{error.body}}
+	</div>
+	<div class="modal-footer">
+	<button class="btn btn-default" ng-click="ok()">OK</button>
+	</div>
+</script>
+

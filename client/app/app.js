@@ -7,7 +7,8 @@ angular.module('livewordsApp', [
   'ngRoute',
   'btford.socket-io',
   'ui.bootstrap',
-  'ngDragDrop'
+  'ngDragDrop',
+  'angular-gestures'
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider

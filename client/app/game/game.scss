@@ -3,31 +3,58 @@ html, body {
 }
 
 .tile {
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-    color: #000000;
-    background: #F7F2E0;
-    padding: 0px;
-    font-size: 20px;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 5px;
-    border: 2px solid #000000;
-    width: 35px;
-    height: 35px;
-    margin: 2px;
-    float: left;
+  color: #000000;
+  background: #F7F2E0;
+  padding: 0px;
+  font-size: 24px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 2px solid #000000;
+  width: 40px;
+  height: 40px;
+  margin: 2px;
+  float: left;
+  
+}
+
+
+#board .tile {
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.8);
+}
+
+.tile.hide { 
+  display:none; 
+}
+
+.smallboard .tile {
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+  margin: 1px;
+  border: 1px solid #000000;
+  border-radius: 3px;
+}
+
+.smallboard .letterpoints {
+  font-size: 6px;
 }
 
 .tile.dragbig {
   width: 70px;
   height: 70px;
-  font-size: 40px;
+  font-size: 44px;
 }
 
 .cell {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   border: 1px solid black;
+}
+
+.smallboard .cell {
+  width: 21px;
+  height: 21px;
 }
 
 
@@ -41,23 +68,23 @@ html, body {
 .letterpoints {
   position: absolute;
   font-size: 12px;
-  right: 0px;
-  top: 16px;
+  right: 1px;
+  bottom: 0px;
 }
 
 .tile.nodrag {
-  background: #BDBDBD !important;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.8) !important;
 }
 
 .special.tw {
   background: red;
 }
 
-.rack {
+#rack {
   border: 1px solid black;
-  height: 40px;
-  width: 275px;
-  float: left;
+  height: 45px;
+  width: 320px;
+  padding-left: 5px;
 }
 
 .special.dw {
@@ -73,13 +100,18 @@ html, body {
 }
 
 #board {
-  width: 600px;
+  width: 675px;
+  height: 675px;
+  max-width: 675px;
+  touch-action: pan-x pan-y !important;
 
 }
 
-#board.dragbig {
-  width: 1200px;
-  height: 1200px;
+#board.smallboard {
+  width: 320px;
+  height: 320px;
+  max-width: 320px;
+
 }
 
 .player {
@@ -96,6 +128,10 @@ html, body {
   font-size: 12px;
 }
 
+tr.ready {
+  color: green;
+}
+
 .game-button {
   float: left;
   margin: 5px;
@@ -108,11 +144,17 @@ html, body {
 }
 
 .bottom {
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }
 
-.board-container {
+#board-container {
+  width: 320px;
+  height: 320px;
   overflow: scroll;
-  -webkit-overflow-scrolling: touch;
-  height: 300px;
+
+}
+
+#board-rack {
+  width: 320px;
+  height: 370px;
 }

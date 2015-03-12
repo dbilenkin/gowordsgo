@@ -3,27 +3,28 @@
 <div class="container">
 	<div class="row">
 		<div class="col-sm-12">
-			<button class="btn btn-success" ng-click="createGame()">
-				New Game
+			<button ng-disabled="!isEveryoneReady" ng-show="isCreator()" class="btn btn-success game-button" ng-click="startGame()">
+				Start
 			</button>
 			
-			<h5>Select a game below to join:</h5>
+			<h5>Game: {{game.name}}</h5>
 			<table class="table table-striped">
 				<tr>
+					<th>Ready?</th>
 					<th>Name</th>
-					<th>Players</th>
-					<th>Status</th>
-					<th></th>
-					<th></th>
-					<th></th>
+					<th>Color</th>
 				</tr>
-				<tr ng-repeat="game in games">
-					<td>{{game.name}}</td>
-					<td><span ng-repeat="player in game.players">{{player.name}}<span ng-if="!$last">,</span></span></td>
-					<td>{{game.status}}</td>
-					<td><a ng-click="joinGame(game)" href='#'>join</a></td>
-					<td><a ng-click="deleteGame(game)" href='#'><span class="glyphicon glyphicon-remove"></span></a></td>
-					
+				
+				<tr ng-class="{ready: player.ready}" ng-repeat="player in game.players">
+					<td ng-if="isCurrentPlayer(player)">
+						<input type="checkbox" ng-model="player.ready" ng-click="updateReady()">
+					</td>
+					<td ng-if="!isCurrentPlayer(player)">
+						<span ng-show="player.ready" class="glyphicon glyphicon-ok-sign"></span>
+						<span ng-hide="player.ready" class="glyphicon glyphicon-question-sign"></span>
+					</td>
+					<td>{{player.name}}</td>
+					<td>color</td>
 				</tr>
 			</table>
 
