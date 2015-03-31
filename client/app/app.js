@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('livewordsApp', [
+  'ipCookie',
   'ngCookies',
   'ngResource',
   'ngSanitize',
@@ -20,13 +21,13 @@ angular.module('livewordsApp', [
     $httpProvider.interceptors.push('authInterceptor');
   })
 
-  .factory('authInterceptor', function ($rootScope, $q, $cookieStore, $location) {
+  .factory('authInterceptor', function ($rootScope, $q, ipCookie, $location) {
     return {
       // Add authorization token to headers
       request: function (config) {
         config.headers = config.headers || {};
-        if ($cookieStore.get('token')) {
-          config.headers.Authorization = 'Bearer ' + $cookieStore.get('token');
+        if (ipCookie('token')) {
+          config.headers.Authorization = 'Bearer ' + ipCookie('token');
         }
         return config;
       },
@@ -36,7 +37,7 @@ angular.module('livewordsApp', [
         if(response.status === 401) {
           $location.path('/login');
           // remove any stale tokens
-          $cookieStore.remove('token');
+          ipCookie.remove('token');
           return $q.reject(response);
         }
         else {

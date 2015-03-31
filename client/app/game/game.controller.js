@@ -12,7 +12,7 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 	};
 	$scope.error = {};
 	$scope.attemptedWords = [];
-	$scope.utilities = Livewords.utilities;
+	$scope.u = Livewords.utilities;
 
 	$scope.isLoggedIn = Auth.isLoggedIn;
 	$scope.getCurrentUser = Auth.getCurrentUser;
@@ -24,39 +24,91 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 		// $('#board-container')[0].addEventListener('touchmove', function(event){
 		// event.stopPropagation();
 		// });
+		var panx = 0;
+		var pany = 0;
+		
+		var el = document.querySelector("#board");
+		
+		var mc = new Hammer.Manager(el);
 
-		$('#board').hammer({
-			prevent_default : true
-		}).bind("doubletap", function(ev) {
-			var event = ev.gesture;
-			var top = $('#board-container').position().top;
-			var left = $('#board-container').position().left;
-			$('#board').toggleClass('smallboard');
-			moveBoardToPosition(event.center.x - left, event.center.y - top);
+		mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
+		mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith(mc.get('pan'));
+	
+		mc.add(new Hammer.Tap({ event: 'doubletap', taps: 2 }));
+	
+		mc.on("panstart", function(event) {
+			panx = event.center.x;
+			pany = event.center.y;
 		});
+		
+		mc.on("panmove", function(event) {
+			
+			var target = event.target;
+			
+			if (!$(target).hasClass('dragger')) {
+				return;
+			}
+			var scrollable = $('#board-container');
+			var deltax = panx - event.center.x;
+			var deltay = pany - event.center.y;
 
-		$('#board').hammer({
-			prevent_default : true
-		}).bind("pinchin", function(ev) {
-			var event = ev.gesture;
-			var top = $('#board-container').position().top;
+			scrollable.scrollTop(scrollable.scrollTop() + deltay);
+			scrollable.scrollLeft(scrollable.scrollLeft() + deltax);
+			
+			panx = event.center.x;
+			pany = event.center.y;
+			
+		});
+		
+		
+		
+		mc.on("pinchin", function(event) {
+			var top = $('#board-container').position().top;	
 			$('#board').addClass('smallboard');
 		});
-
-		$('#board').hammer({
-			prevent_default : true
-		}).bind("pinchout", function(ev) {
-			var event = ev.gesture;
+		
+		mc.on("pinchout", function(event) {
 			var top = $('#board-container').position().top;
 			$('#board').removeClass('smallboard');
 			moveBoardToPosition(event.center.x, event.center.y - top);
 		});
-
-		$('#board-container').dragscrollable({
-			dragSelector : '.dragger',
-			acceptPropagatedEvent : false,
-			preventDefault : false
+		
+		mc.on("doubletap", function(event) {
+			if ($('#board').hasClass('smallboard')) {
+				var top = $('#board-container').position().top;
+				var left = $('#board-container').position().left;
+				$('#board').removeClass('smallboard');
+				moveBoardToPosition(event.center.x, event.center.y - top);
+				// $('#board').removeClass('smallboard', {
+					// duration: 500,
+					// queue: true,
+					// children: true
+				// });
+// 				
+				// $('#board-container').animate({ 
+					// scrollTop: event.center.y - top,
+					// scrollLeft: event.center.x - left
+				// }, {
+					// duration: 500,
+					// queue: true
+				// });
+			} else {
+				$('#board').addClass('smallboard');
+				// $('#board').addClass('smallboard', {
+					// duration: 500,
+					// queue: true,
+					// children: true
+				// });
+			}
+			
+			
 		});
+
+		// $('#board-container').dragscrollable({
+			// dragSelector : '.dragger',
+			// acceptPropagatedEvent : false,
+			// preventDefault : false
+		// });
 
 	}, 100);
 
@@ -65,10 +117,18 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 		if ($rootScope.currentPlayer.number == updatedGame.updatedBy) {
 			return;
 		}
+		
+		if (updatedGame.status == 'over') {
+			var winner = $scope.game.players[updatedGame.winner];
+			$scope.error.label = "You Lost!";
+			$scope.error.body = winner.name + " won the game, with a score of " + winner.score;
+			$scope.openErrorModal();
+		}
 		var now = new Date().getTime();
 		$scope.gameTime = now - $scope.game.startTime;
 		$scope.game = updatedGame;
 		var board = $scope.game.board;
+		$scope.playerColumnWidth = 'col-xs-'+(12/$scope.game.players.length);
 		var conflictedTiles = false;
 		//TODO this is darn ugly :(
 		for (var i = 0; i < board.length; i++) {
@@ -93,11 +153,11 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 				for (var j = 0; j < board.length; j++) {
 					if (board[i][j][0]) {
 
-						var tileEl = $('#board').find('tr').eq(i).find('td').eq(j).find('div.tile');
+						var tileEl = $('#board div.board-row:nth-child('+(i+1)+') div.cell:nth-child('+(j+1)+')').find('div.tile');
 						tileEl.addClass('nodrag dragger');
 						tileEl.draggable("disable");
 
-						var square = $('#board').find('tr').eq(i).find('td').eq(j);
+						var square = $('#board div.board-row:nth-child('+(i+1)+') div.cell:nth-child('+(j+1)+')');
 						square.droppable("disable");
 					}
 				}
@@ -110,7 +170,7 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 					var row = $scope.placedTiles[i].row;
 					var col = $scope.placedTiles[i].col;
 					if (!$scope.game.board[row][col][0]) {
-						var square = $('#board').find('tr').eq(row).find('td').eq(col);
+						var square = $('#board div.board-row:nth-child('+(row+1)+') div.cell:nth-child('+(col+1)+')');
 						square.droppable("enable");
 					}
 				}
@@ -145,11 +205,11 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 
 						addNearLegalSquares(i, j);
 
-						var tileEl = $('#board').find('tr').eq(i).find('td').eq(j).find('div.tile');
+						var tileEl = $('#board div.board-row:nth-child('+(i+1)+') div.cell:nth-child('+(j+1)+')').find('div.tile');
 						tileEl.addClass('nodrag');
 						tileEl.draggable("disable");
 
-						var square = $('#board').find('tr').eq(i).find('td').eq(j);
+						var square = $('#board div.board-row:nth-child('+(i+1)+') div.cell:nth-child('+(j+1)+')');
 						square.droppable("disable");
 					}
 				}
@@ -164,6 +224,8 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 		socket.syncUpdatesObject('game' + game._id, $scope.game, function(event, updatedGame) {
 			syncUpdates(event, updatedGame);
 		});
+		
+		$scope.playerColumnWidth = 'col-xs-'+(12/game.players.length);
 
 	});
 
@@ -188,10 +250,12 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 				//console.log("revert triggered");
 
 				var square = this[0].parentElement;
-				var row = square.parentElement.rowIndex;
-				var col = square.cellIndex;
+				var row = $(square.parentElement).index();
+				var col = $(square).index();
+				
+				console.log("row: " + row);
 
-				if (row) {
+				if ($(square).attr('id') != 'rack') {
 					var tile = $scope.game.board[row][col][0];
 					$scope.placedTiles.push(tile);
 					$(square).droppable("disable");
@@ -213,13 +277,13 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 		//revert : 'invalid',
 		helper : 'clone',
 		appendTo : 'body',
-		containment : '#board-rack',
+		//containment : '#board-rack',
 		revertDuration : 100,
 		cursorAt : {
 			left : 35,
 			top : 35
 		}
-	}
+	};
 
 	function addNearLegalSquares(row, col) {
 		$scope.legalSquares['' + row + col] = true;
@@ -238,16 +302,25 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 	};
 
 	$scope.getNewTiles = function() {
+		
+		var putBody = {
+			updatedBy: $rootScope.currentPlayer.number
+		};
 
-		$http.get('/api/games/' + $scope.game._id + "/getNewTiles").success(function(resp) {
-			$scope.game.bag = resp.bag;
+		$http.put('/api/games/' + $scope.game._id + "/getNewTiles", putBody).success(function(resp) {
+			$scope.game = resp.game;
 			$scope.addTilesToRack(resp.letters);
 
 		});
 
-	}
+	};
 
 	$scope.swapTiles = function() {
+		
+		var putBody = {
+			updatedBy: $rootScope.currentPlayer.number,
+			currentTiles: $scope.currentTiles
+		};
 
 		if ($scope.placedTiles.length > 0) {
 			$scope.error.label = "Can't Swap Now";
@@ -255,7 +328,7 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 			return false;
 		}
 
-		$http.put('/api/games/' + $scope.game._id + "/swapTiles", $scope.currentTiles).success(function(resp) {
+		$http.put('/api/games/' + $scope.game._id + "/swapTiles", putBody).success(function(resp) {
 			$scope.game = resp.game;
 			$scope.currentTiles = [];
 			$scope.addTilesToRack(resp.letters);
@@ -282,7 +355,7 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 		for (var i = 0; i < newLetters.length; i++) {
 			$scope.currentTiles.push({
 				'letter' : newLetters[i],
-				'points' : $scope.utilities.letterDist[newLetters[i]][1],
+				'points' : $scope.u.letterDist[newLetters[i]][1],
 				'col' : -1,
 				'row' : -1
 			});
@@ -298,7 +371,7 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 	$scope.stopDragging = function() {
 		//$(".tile").removeClass('hide');
 		console.log("stopDragging");
-	}
+	};
 
 	$scope.isCurrentPlayer = function(player) {
 		if ($rootScope.currentPlayer) {
@@ -314,7 +387,7 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 		$scope.droppedInRack = false;
 
 		$(tile.helper[0]).addClass("dragbig");
-		$("#rack div:nth-child(" + (index + 1) + ")").addClass('hide')
+		$("#rack div.tile:nth-child(" + (index + 1) + ")").addClass('hide');
 
 	};
 
@@ -326,6 +399,8 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 
 		var something = event;
 		$scope.droppedInRack = true;
+		
+		$scope.checkWord();
 
 	};
 
@@ -341,10 +416,10 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 			}
 		}
 
-		var tile = $('#board').find('tr').eq(row).find('td').eq(col).find('div.tile');
+		var tile = $('#board div.board-row:nth-child('+(row+1)+') div.cell:nth-child('+(col+1)+')').find('div.tile');
 		tile.addClass('hide');
 
-		var square = $('#board').find('tr').eq(row).find('td').eq(col);
+		var square = $('#board div.board-row:nth-child('+(row+1)+') div.cell:nth-child('+(col+1)+')');
 		square.droppable("enable");
 
 	};
@@ -367,7 +442,7 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 		$scope.game.board[row][col][0].col = col;
 		var tile = $scope.game.board[row][col][0];
 
-		var square = $('#board').find('tr').eq(row).find('td').eq(col);
+		var square = $('#board div.board-row:nth-child('+(row+1)+') div.cell:nth-child('+(col+1)+')');
 		square.droppable("disable");
 
 		$scope.placedTiles.push(tile);
@@ -379,6 +454,8 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 
 			moveBoardToPosition(event.clientX - left, event.clientY - top);
 		}
+		
+		$scope.checkWord();
 
 		// $timeout(function() {
 		// $('#board .tile').addClass('player' + $rootScope.currentPlayer.number)
@@ -447,150 +524,38 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 			$scope.error.label = "Illegal Tile Placement";
 			$scope.error.body = "Tiles must be placed next to an existing tile.";
 		}
+		$scope.legalPlacement = legalSquare;
 		return legalSquare;
 
 	}
+	
+	$scope.go = function() {
+		
+		if ($scope.placedTiles.length === 0) {
+			$scope.error.label = "No Tiles Placed";
+			$scope.error.body = "Umm, you didn't put any tiles down.";
+			$scope.openErrorModal();
+			return;
 
-
-	$scope.checkWord = function() {
-
-		var possibleWords = [];
-		var vertical = true;
-		if ($scope.placedTiles.length > 1) {
-			if ($scope.placedTiles[0].row === $scope.placedTiles[1].row) {
-				vertical = false;
-			}
 		}
-
-		if (!legalPlacement(vertical)) {
+		
+		if (!$scope.legalPlacement) {
 			$scope.openErrorModal();
 			//removePlacedTiles();
 			return;
 		}
-
-		var tile = $scope.placedTiles[0];
-		var firstTile = tile;
-		var possibleWord = '';
-
-		if (!vertical) {
-			for (var h = tile.col - 1; h >= 0; h--) {
-				if ($scope.game.board[tile.row][h][0]) {
-					firstTile = $scope.game.board[tile.row][h][0];
-				} else {
-					break;
-				}
-			}
-
-			possibleWord = firstTile.letter;
-
-			for ( h = firstTile.col + 1; h <= 14; h++) {
-				if ($scope.game.board[tile.row][h][0]) {
-					possibleWord += $scope.game.board[tile.row][h][0].letter;
-				} else {
-					break;
-				}
-			}
-		} else {
-			for (var v = tile.row - 1; v >= 0; v--) {
-				if ($scope.game.board[v][tile.col][0]) {
-					firstTile = $scope.game.board[v][tile.col][0];
-				} else {
-					break;
-				}
-			}
-
-			possibleWord = firstTile.letter;
-
-			for ( v = firstTile.row + 1; v <= 14; v++) {
-				if ($scope.game.board[v][tile.col][0]) {
-					possibleWord += $scope.game.board[v][tile.col][0].letter;
-				} else {
-					break;
-				}
-			}
-		}
-		if (possibleWord.length > 1) {
-			possibleWords.push(possibleWord.toLowerCase());
-		}
-
-		for (var i = 0; i < $scope.placedTiles.length; i++) {
-			tile = $scope.placedTiles[i];
-			firstTile = tile;
-
-			if (vertical) {
-				for ( h = tile.col - 1; h >= 0; h--) {
-					if ($scope.game.board[tile.row][h][0]) {
-						firstTile = $scope.game.board[tile.row][h][0];
-					} else {
-						break;
-					}
-				}
-
-				possibleWord = firstTile.letter;
-
-				for ( h = firstTile.col + 1; h <= 14; h++) {
-					if ($scope.game.board[tile.row][h][0]) {
-						possibleWord += $scope.game.board[tile.row][h][0].letter;
-					} else {
-						break;
-					}
-				}
-			} else {
-				for ( v = tile.row - 1; v >= 0; v--) {
-					if ($scope.game.board[v][tile.col][0]) {
-						firstTile = $scope.game.board[v][tile.col][0];
-					} else {
-						break;
-					}
-				}
-
-				possibleWord = firstTile.letter;
-
-				for ( v = firstTile.row + 1; v <= 14; v++) {
-					if ($scope.game.board[v][tile.col][0]) {
-						possibleWord += $scope.game.board[v][tile.col][0].letter;
-					} else {
-						break;
-					}
-				}
-			}
-
-			if (possibleWord.length > 1) {
-				possibleWords.push(possibleWord.toLowerCase());
-			}
-
-		}
-
-		if (possibleWords.length === 0) {
-			$scope.error.label = "One Letter Word?";
-			$scope.error.body = "Words have to be at least 2 letters long.";
-			$scope.openErrorModal();
-		}
-
-		var oneGoodWord = false;
-		var badWord = false;
-		var goodWords = [];
-		var wordsScore = 0;
-
-		for ( i = 0; i < possibleWords.length; i++) {
-			if ($.inArray(possibleWords[i], $rootScope.words) !== -1) {
-				oneGoodWord = true;
-				wordsScore += $scope.utilities.getScore(possibleWords[i].toUpperCase(), $scope.placedTiles);
-			} else {
-				$scope.error.badWord = possibleWords[i];
-				badWord = true;
-			}
-		}
-
-		if (oneGoodWord && !badWord) {
+		
+		if ($scope.oneGoodWord && !$scope.badWord) {
 
 			var gameVersionPreUpdate = $scope.game.version;
+			var rackEmpty = $scope.currentTiles == 0;
 
 			var updatedBoard = {
 				gameVersion : $scope.game.version,
 				placedTiles : $scope.placedTiles,
 				updatedBy : $rootScope.currentPlayer.number,
-				score : wordsScore
+				score : $scope.wordsScore,
+				rackEmpty : rackEmpty
 			};
 
 			$http.put('/api/games/' + $scope.game._id + "/board", updatedBoard).success(function(resp) {
@@ -612,42 +577,196 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 				} else {
 					var game = resp.game;
 					$scope.game = game;
-					$rootScope.currentPlayer.score += wordsScore;
-					$scope.game.players[$rootScope.currentPlayer.number].score += wordsScore;
+					$rootScope.currentPlayer.score += $scope.wordsScore;
+					$scope.game.players[$rootScope.currentPlayer.number].score += $scope.wordsScore;
 
 					for (var i = 0; i < $scope.placedTiles.length; i++) {
 						var row = $scope.placedTiles[i].row;
 						var col = $scope.placedTiles[i].col;
 
 						addNearLegalSquares(row, col);
-						var tile = $('#board').find('tr').eq(row).find('td').eq(col).find('div.tile');
+						var tile = $('#board div.board-row:nth-child('+(row+1)+') div.cell:nth-child('+(col+1)+')').find('div.tile');
 
 						tile.addClass('nodrag dragger');
 						tile.draggable("disable");
 
 						//this is to set the new disabled tiles to drag the board
-						$('#board-container').removedragscrollable();
-						$('#board-container').dragscrollable({
-							dragSelector : '.dragger',
-							acceptPropagatedEvent : false,
-							preventDefault : false
-						});
+						// $('#board-container').removedragscrollable();
+						// $('#board-container').dragscrollable({
+							// dragSelector : '.dragger',
+							// acceptPropagatedEvent : false,
+							// preventDefault : false
+						// });
 
 					}
 
 					$scope.placedTiles = [];
-					$scope.addTilesToRack(resp.letters);
+					
+					
+					if (resp.letters.length == 0 && $scope.currentTiles.length == 0) {
+						$scope.error.label = "You Won!";
+						$scope.error.body = "You really did it!";
+						$scope.openErrorModal();
+					} else {
+						$scope.addTilesToRack(resp.letters);
+					}
 
 				}
 			});
 
-		} else {
+		} else if ($scope.badWord) {
 			$scope.error.label = "Not A Word";
 			$scope.error.body = $scope.error.badWord.toUpperCase() + " is not a word.";
 			$scope.openErrorModal();
 			//removePlacedTiles();
+		} else {
+			$scope.error.label = "One Letter Word?";
+			$scope.error.body = "Words must be at least 2 letters long.";
+			$scope.openErrorModal();
 		}
 
+		
+	};
+
+
+	$scope.checkWord = function() {
+		
+		for (var i = 0; i < $scope.placedTiles.length; i++) {
+			$scope.placedTiles[i].wordsScore = 0;
+		}
+		
+
+		var possibleWords = [];
+		var vertical = true;
+		if ($scope.placedTiles.length > 1) {
+			if ($scope.placedTiles[0].row === $scope.placedTiles[1].row) {
+				vertical = false;
+			}
+		}
+
+		if (!legalPlacement(vertical)) {
+			//$scope.openErrorModal();
+			//removePlacedTiles();
+			return;
+		}
+
+		var tile = $scope.placedTiles[0];
+		var firstTile = tile;
+		var possibleWord = [];
+
+		if (!vertical) {
+			for (var h = tile.col - 1; h >= 0; h--) {
+				if ($scope.game.board[tile.row][h][0]) {
+					firstTile = $scope.game.board[tile.row][h][0];
+				} else {
+					break;
+				}
+			}
+
+			possibleWord.push(firstTile);
+
+			for ( h = firstTile.col + 1; h <= 14; h++) {
+				if ($scope.game.board[tile.row][h][0]) {
+					possibleWord.push($scope.game.board[tile.row][h][0]);
+				} else {
+					break;
+				}
+			}
+		} else {
+			for (var v = tile.row - 1; v >= 0; v--) {
+				if ($scope.game.board[v][tile.col][0]) {
+					firstTile = $scope.game.board[v][tile.col][0];
+				} else {
+					break;
+				}
+			}
+
+			possibleWord.push(firstTile);
+
+			for ( v = firstTile.row + 1; v <= 14; v++) {
+				if ($scope.game.board[v][tile.col][0]) {
+					possibleWord.push($scope.game.board[v][tile.col][0]);
+				} else {
+					break;
+				}
+			}
+		}
+		if (possibleWord.length > 1) {
+			possibleWords.push(possibleWord);
+		}
+
+		for (var i = 0; i < $scope.placedTiles.length; i++) {
+			tile = $scope.placedTiles[i];
+			firstTile = tile;
+			possibleWord = [];
+
+			if (vertical) {
+				for ( h = tile.col - 1; h >= 0; h--) {
+					if ($scope.game.board[tile.row][h][0]) {
+						firstTile = $scope.game.board[tile.row][h][0];
+					} else {
+						break;
+					}
+				}
+
+				possibleWord.push(firstTile);
+				
+
+				for ( h = firstTile.col + 1; h <= 14; h++) {
+					if ($scope.game.board[tile.row][h][0]) {
+						possibleWord.push($scope.game.board[tile.row][h][0]);
+					} else {
+						break;
+					}
+				}
+			} else {
+				for ( v = tile.row - 1; v >= 0; v--) {
+					if ($scope.game.board[v][tile.col][0]) {
+						firstTile = $scope.game.board[v][tile.col][0];
+					} else {
+						break;
+					}
+				}
+
+				possibleWord.push(firstTile);
+
+				for ( v = firstTile.row + 1; v <= 14; v++) {
+					if ($scope.game.board[v][tile.col][0]) {
+						possibleWord.push($scope.game.board[v][tile.col][0]);
+					} else {
+						break;
+					}
+				}
+			}
+
+			if (possibleWord.length > 1) {
+				possibleWords.push(possibleWord);
+			}
+
+		}
+
+		
+
+		$scope.oneGoodWord = false;
+		$scope.badWord = false;
+		$scope.goodWords = [];
+		$scope.wordsScore = 0;
+
+		for ( i = 0; i < possibleWords.length; i++) {
+			if ($.inArray($scope.u.getWordFromTiles(possibleWords[i]), $rootScope.words) !== -1) {
+				$scope.oneGoodWord = true;
+				$scope.goodWords.push(possibleWords[i]);
+			} else {
+				$scope.error.badWord = $scope.u.getWordFromTiles(possibleWords[i]).toUpperCase();
+				$scope.badWord = true;
+			}
+			
+			$scope.wordsScore += $scope.u.getScore(possibleWords[i], $scope.placedTiles);
+		}
+		
+		$scope.placedTiles[$scope.placedTiles.length - 1].wordsScore = $scope.wordsScore;
+
+		
 	};
 
 	function removePlacedTiles() {
@@ -655,7 +774,7 @@ angular.module('livewordsApp').controller('GameCtrl', function($rootScope, $scop
 			var row = $scope.placedTiles[i].row;
 			var col = $scope.placedTiles[i].col;
 			$scope.game.board[row][col] = [];
-			var square = $('#board').find('tr').eq(row).find('td').eq(col);
+			var square = $('#board div.board-row:nth-child('+(row+1)+') div.cell:nth-child('+(col+1)+')');
 			square.droppable("enable");
 			$scope.currentTiles.push($scope.placedTiles[i]);
 		}

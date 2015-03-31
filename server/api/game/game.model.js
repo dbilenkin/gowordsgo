@@ -10,8 +10,9 @@ var GameSchema = new Schema({
 	bag : [],
 	players : [],
 	status : String,
+	winner : Number,
 	startTime : Date,
-	boardSize : Number,
+	boardType : {},
 	bagSize : String
 
 });

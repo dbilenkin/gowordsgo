@@ -18,6 +18,17 @@
             A name is required
           </p>
         </div>
+        
+        <div class="form-group" ng-class="{ 'has-success': form.animal.$valid && submitted,
+                                            'has-error': form.animal.$invalid && submitted }">
+          <label>Favorite Animal</label>
+
+          <input type="text" name="animal" class="form-control" ng-model="user.animal"
+                 required/>
+          <p class="help-block" ng-show="form.animal.$error.required && submitted">
+            For your avatar.
+          </p>
+        </div>
 
         <div class="form-group" ng-class="{ 'has-success': form.email.$valid && submitted,
                                             'has-error': form.email.$invalid && submitted }">

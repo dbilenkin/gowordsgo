@@ -1,4 +1,4 @@
-<div ng-include="'components/navbar/navbar.html'"></div>
+
 
 <div class="container">
 	<div class="row">
@@ -7,7 +7,7 @@
 				Start
 			</button>
 			
-			<h5>Game: {{game.name}}</h5>
+			<div class="join-name"><h5>Game: {{game.name}}</h5></div>
 			<table class="table table-striped">
 				<tr>
 					<th>Ready?</th>
@@ -32,40 +32,7 @@
 
 
 	</div>
+	<a type="button" class="btn btn-default" href="/"> <span class="glyphicon glyphicon-home" aria-hidden="true"></span> </a>
 
 </div>
 
-<footer class="footer">
-	<div class="container">
-		<p>
-			Dimitri Bilenkin | <a href="http://bilenkin.com">bilenkin.com</a>
-		</p>
-	</div>
-</footer>
-
-<script type="text/ng-template" id="gameModalContent.html">
-    <div class="modal-header">
-        <h3 class="modal-title">New Game</h3>
-    </div>
-    <div class="modal-body">
-    	<div class="row">
-	        <div class="col-sm-6">
-	            <label>Name:</label> <input ng-model="selected.name" type="text" class="form-control">    
-	        </div>
-	    </div>
-    	<div class="row">
-	        <div class="col-sm-6">
-	            <label>Board Size:</label> <select class="form-control" ng-model="selected.boardSize" ng-options="boardSize for boardSize in boardSizes"></select>
-	        </div>
-	    </div>
-	    <div class="row">
-	        <div class="col-sm-6">
-	            <label>Bag Size:</label> <select class="form-control" ng-model="selected.bagSize" ng-options="bagSize.label for bagSize in bagSizes"></select>
-	        </div>
-	    </div>
-	</div>
-    <div class="modal-footer">
-    	<button class="btn btn-primary" ng-click="create()">Create</button>
-        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-    </div>
-</script>

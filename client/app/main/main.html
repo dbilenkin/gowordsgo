@@ -1,36 +1,23 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
+
 <div class="container">
-	<div class="row">
-		<div class="col-sm-12">
-			<button class="btn btn-success" ng-click="createGame()">
-				New Game
+	<div class="row text-center large-bottom">
+
+			<button class="btn btn-success btn-lg center-block" ng-click="singlePlayer()">
+				Single Player
 			</button>
-			
-			<h5>Select a game below to join:</h5>
-			<table class="table table-striped">
-				<tr>
-					<th>Name</th>
-					<th>Players</th>
-					<th>Status</th>
-					<th></th>
-					<th></th>
-					<th></th>
-				</tr>
-				<tr ng-repeat="game in games">
-					<td>{{game.name}}</td>
-					<td><span ng-repeat="player in game.players">{{player.name}}<span ng-if="!$last">,</span></span></td>
-					<td>{{game.status}}</td>
-					<td><a ng-click="joinGame(game)" href='#'>join</a></td>
-					<td><a ng-click="deleteGame(game)" href='#'><span class="glyphicon glyphicon-remove"></span></a></td>
-					
-				</tr>
-			</table>
-
-		</div>
-
 
 	</div>
+	<div class="row text-center">		
+
+
+
+			<button class="btn btn-success btn-lg" ng-click="multiPlayer()">
+				Multiplayer
+			</button>
+	</div>
+
 
 </div>
 
@@ -42,29 +29,3 @@
 	</div>
 </footer>
 
-<script type="text/ng-template" id="gameModalContent.html">
-    <div class="modal-header">
-        <h3 class="modal-title">New Game</h3>
-    </div>
-    <div class="modal-body">
-    	<div class="row">
-	        <div class="col-sm-6">
-	            <label>Name:</label> <input ng-model="selected.name" type="text" class="form-control">    
-	        </div>
-	    </div>
-    	<div class="row">
-	        <div class="col-sm-6">
-	            <label>Board Size:</label> <select class="form-control" ng-model="selected.boardSize" ng-options="boardSize for boardSize in boardSizes"></select>
-	        </div>
-	    </div>
-	    <div class="row">
-	        <div class="col-sm-6">
-	            <label>Bag Size:</label> <select class="form-control" ng-model="selected.bagSize" ng-options="bagSize.label for bagSize in bagSizes"></select>
-	        </div>
-	    </div>
-	</div>
-    <div class="modal-footer">
-    	<button class="btn btn-primary" ng-click="create()">Create</button>
-        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-    </div>
-</script>

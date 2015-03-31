@@ -1,13 +1,18 @@
 'use strict';
 
 angular.module('livewordsApp')
-  .factory('Auth', function Auth($location, $rootScope, $http, User, $cookieStore, $q) {
+  .factory('Auth', function Auth($location, $rootScope, $http, User, ipCookie, $q) {
     var currentUser = {};
-    if($cookieStore.get('token')) {
+    if(ipCookie('token')) {
       currentUser = User.get();
     }
 
     return {
+    	
+      getExpires: function() {
+      	var now = new Date().getTime();
+      	return new Date(now.getFullYear(), now.getMonth()+2, now.getDate());
+      },
 
       /**
        * Authenticate user and save token
@@ -25,7 +30,8 @@ angular.module('livewordsApp')
           password: user.password
         }).
         success(function(data) {
-          $cookieStore.put('token', data.token);
+        	
+          ipCookie('token', data.token, { expires: 30 });
           currentUser = User.get();
           deferred.resolve(data);
           return cb();
@@ -45,7 +51,7 @@ angular.module('livewordsApp')
        * @param  {Function}
        */
       logout: function() {
-        $cookieStore.remove('token');
+        ipCookie.remove('token');
         currentUser = {};
       },
 
@@ -61,7 +67,7 @@ angular.module('livewordsApp')
 
         return User.save(user,
           function(data) {
-            $cookieStore.put('token', data.token);
+            ipCookie('token', data.token, { expires: 30 });
             currentUser = User.get();
             return cb(user);
           },
@@ -140,7 +146,7 @@ angular.module('livewordsApp')
        * Get auth token
        */
       getToken: function() {
-        return $cookieStore.get('token');
+        return ipCookie('token');
       }
     };
   });

@@ -5,12 +5,26 @@ var Game = require('./game.model');
 
 // Get list of games
 exports.index = function(req, res) {
-	Game.find(function(err, games) {
-		if (err) {
-			return handleError(res, err);
-		}
-		return res.json(200, games);
-	});
+	if (req.query.status) {
+		Game.find({
+			status : req.params.status
+		}, function(err, games) {
+			if (err) {
+				return handleError(res, err);
+			}
+			return res.json(200, games);
+		});
+
+	} else {
+		Game.find(function(err, games) {
+			if (err) {
+				return handleError(res, err);
+			}
+			return res.json(200, games);
+		});
+
+	}
+
 };
 
 // Get a single game
@@ -73,32 +87,35 @@ exports.swapTiles = function(req, res) {
 		if (!game) {
 			return res.send(404);
 		}
-		
+
 		var newLetters = [];
-		var oldTiles = req.body;
-		
+		var oldTiles = req.body.currentTiles;
+
 		for (var i = 0; i < oldTiles.length; i++) {
 			newLetters.push(getLetter(game.bag));
 		}
-		
+
 		for (var i = 0; i < oldTiles.length; i++) {
 			game.bag.push(oldTiles[i].letter);
 		}
-		
+
 		game.version++;
-		
+		game.updatedBy = req.body.updatedBy;
+
 		game.save(function(err) {
 			if (err) {
 				return handleError(res, err);
 			}
-			return res.json(200, { game: game, letters: newLetters });
+			return res.json(200, {
+				game : game,
+				letters : newLetters
+			});
 		});
-		
+
 	});
 };
 
-
-// Get tiles for when game starts
+// Get tiles for when game starts and updates bag
 exports.getNewTiles = function(req, res) {
 	if (req.body._id) {
 		delete req.body._id;
@@ -110,20 +127,28 @@ exports.getNewTiles = function(req, res) {
 		if (!game) {
 			return res.send(404);
 		}
-		
+
 		var newLetters = [];
 
 		for (var i = 0; i < 7; i++) {
-			newLetters.push(getLetter(game.bag));
+			var letter = getLetter(game.bag);
+			if (letter) {
+				newLetters.push(letter);
+			}
+			
 		}
-		
+
 		game.version++;
-		
+		game.updatedBy = req.body.updatedBy;
+
 		game.save(function(err) {
 			if (err) {
 				return handleError(res, err);
 			}
-			return res.json(200, { game: game, letters: newLetters });
+			return res.json(200, {
+				game : game,
+				letters : newLetters
+			});
 		});
 
 	});
@@ -141,12 +166,10 @@ exports.updateBoard = function(req, res) {
 		if (!game) {
 			return res.send(404);
 		}
-		
+
 		var clientVersion = req.body.gameVersion;
 		var updatedBy = req.body.updatedBy;
 		var score = req.body.score;
-
-		
 
 		var placedTiles = req.body.placedTiles;
 		var conflict = false;
@@ -158,18 +181,25 @@ exports.updateBoard = function(req, res) {
 		}
 
 		if (!conflict) {
-			
+
 			var newLetters = [];
-			
+
 			if (clientVersion != game.version) {
 				return res.json(200, "outdated");
 			}
-			
+
 			for (var i = 0; i < placedTiles.length; i++) {
 				game.board[placedTiles[i].row][placedTiles[i].col][0] = placedTiles[i];
-				newLetters.push(getLetter(game.bag));
+				
+				var letter = getLetter(game.bag);
+				if (letter) {
+					newLetters.push(letter);
+				} else if (req.body.rackEmpty) {
+					game.status = 'over';
+					game.winner = updatedBy;
+				}
 			}
-			
+
 			game.players[updatedBy].score += score;
 			game.version++;
 			game.updatedBy = updatedBy;
@@ -182,7 +212,9 @@ exports.updateBoard = function(req, res) {
 				updatedBy : game.updatedBy,
 				board : game.board,
 				bag : game.bag,
-				players : game.players
+				players : game.players,
+				status : game.status,
+				winner : game.winner
 			}, {
 				multi : false
 			}, function(err, numberAffected, raw) {
@@ -195,7 +227,10 @@ exports.updateBoard = function(req, res) {
 					if (err) {
 						return handleError(res, err);
 					}
-					return res.json(200, { game: game, letters: newLetters });
+					return res.json(200, {
+						game : game,
+						letters : newLetters
+					});
 				});
 			});
 

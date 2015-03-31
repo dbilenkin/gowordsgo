@@ -22,14 +22,18 @@ angular.module('livewordsApp')
                 var drawSquares = function () {
 	                for (var i = 0; i < 15; i++) {
 						for (var j = 0; j < 15; j++) {
-							var specialSquare =Livewords.utilities.getSpecialSquare([i,j]);
+							var specialSquare = Livewords.utilities.getSpecialSquare([i,j]);
 							if (specialSquare) {
-								$('#board').find('tr').eq(i).find('td').eq(j).addClass( "special " + specialSquare );
+								$('#board div.board-row:nth-child('+(i+1)+') div.cell:nth-child('+(j+1)+')').addClass( "special " + specialSquare );
+							}
+							
+							if (i == 7 && j == 7) {
+								$('#board div.board-row:nth-child('+(i+1)+') div.cell:nth-child('+(j+1)+')').addClass('center-square');
 							}
 						}
 					}
 					
-	            }
+	            };
 	            timer(drawSquares, 0);
            }
            

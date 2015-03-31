@@ -1,0 +1,29 @@
+
+
+
+<div class="container">
+	<h3>New Game</h3>
+	<form>
+		<div class="create-form">
+			<div class="form-group">
+				<label>Name:</label>
+				<input ng-model="selected.name" type="text" class="form-control">
+			</div>
+
+			<div class="form-group">
+				<label>Board Type:</label><select class="form-control" ng-model="selected.boardType" ng-options="boardType.label for boardType in options.boardTypes"></select>
+			</div>
+
+			<div class="form-group">
+				<label>Bag Size:</label><select class="form-control" ng-model="selected.bagSize" ng-options="bagSize.label for bagSize in options.bagSizes"></select>
+			</div>
+
+		</div>
+		<a type="button" class="btn btn-default" href="/"> <span class="glyphicon glyphicon-home" aria-hidden="true"></span> </a>
+		<button class="btn btn-primary" ng-click="create()">
+			Create
+		</button>
+
+	</form>
+</div>
+

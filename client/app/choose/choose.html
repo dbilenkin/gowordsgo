@@ -1,0 +1,37 @@
+<div class="container">
+	<div class="row">
+		
+		<div class="col-sm-12">
+			<h3>Multiplayer</h3>
+			
+			<a type="button" class="btn btn-success" href="/create"> Create a game </a>
+			
+			<h5>Or select a game below to join:</h5>
+			<div class="games-container">
+				<table class="table table-striped">
+					<tr>
+						<th>Name</th>
+						<th>Players</th>
+						<th></th>
+						<th></th>
+					</tr>
+					<tr ng-repeat="game in games">
+						<td>{{game.name}}</td>
+						<td><span ng-repeat="player in game.players">{{player.name}}<span ng-if="!$last">,</span></span></td>
+						<td><button ng-click="joinGame(game)" class="btn btn-success btn-xs"> Join </button></td>
+						<td><a ng-click="deleteGame(game)" href='#'><span class="glyphicon glyphicon-remove"></span></a></td>
+						
+					</tr>
+				</table>
+			</div>
+
+		</div>
+
+
+	</div>
+	<a type="button" class="btn btn-default" href="/"> <span class="glyphicon glyphicon-home" aria-hidden="true"></span> </a>
+
+</div>
+
+
+
