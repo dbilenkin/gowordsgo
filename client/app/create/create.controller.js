@@ -28,16 +28,13 @@ angular.module('livewordsApp').controller('CreateCtrl', function($rootScope, $sc
 		}],
 		bagSizes : [{
 			id : 0,
-			label : 'Classic (98)'
+			label : 'Classic'
 		}, {
 			id : 3,
-			label : 'Large (130)'
+			label : 'Full'
 		}, {
 			id : 4,
-			label : 'Medium (67)'
-		}, {
-			id : 5,
-			label : 'Small (46)'
+			label : 'Half'
 		}, {
 			id : 6,
 			label : 'DOG (for testing)'
@@ -83,20 +80,14 @@ angular.module('livewordsApp').controller('CreateCtrl', function($rootScope, $sc
 	}
 	
 	
-	function addPlayerCss(player) {
+	function addPlayerColor(player) {
 		var playerNumber = player.number;
 		
 		var r = Math.floor(Math.random() * 256);
 		var g = Math.floor(Math.random() * 256);
 		var b = Math.floor(Math.random() * 256);
 		
-		player.color = [r, g, b];
-		var color = $scope.utilities.getForegroundColor(r, g, b);
-		
-		$('<style>.player' + playerNumber +
-		'{ background-color: rgb('+ r + ',' + g + ',' + b + '); }' +
-		'{ background-color: ' + color + '; }' +
-		'</style>').appendTo('body');
+		player.color = $scope.utilities.rgbToHex(r, g, b);
 	}
 
 	function initPlayer(game) {
@@ -117,7 +108,7 @@ angular.module('livewordsApp').controller('CreateCtrl', function($rootScope, $sc
 		player.firstName = player.name.split(' ')[0];
 		
 		game.updatedBy = playerNumber;
-		addPlayerCss(player);
+		addPlayerColor(player);
 		
 		$rootScope.currentPlayer = player;
 
@@ -170,6 +161,7 @@ angular.module('livewordsApp').controller('CreateCtrl', function($rootScope, $sc
 		initPlayer(game);
 		
 		if ($rootScope.singlePlayer) {
+			game.startTime = Date.now();
 			game.status = 'started';
 		}
 

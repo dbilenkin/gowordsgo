@@ -20,22 +20,18 @@ angular.module('livewordsApp').controller('ChooseCtrl', function($rootScope, $sc
 
 		
 	};
+	
+	
 
 	
-	function addPlayerCss(player) {
+	function addPlayerColor(player) {
 		var playerNumber = player.number;
 		
 		var r = Math.floor(Math.random() * 256);
 		var g = Math.floor(Math.random() * 256);
 		var b = Math.floor(Math.random() * 256);
 		
-		player.color = [r, g, b];
-		var color = $scope.utilities.getForegroundColor(r, g, b);
-		
-		$('<style>.player' + playerNumber +
-		'{ background-color: rgb('+ r + ',' + g + ',' + b + '); }' +
-		'{ background-color: ' + color + '; }' +
-		'</style>').appendTo('body');
+		player.color = $scope.utilities.rgbToHex(r, g, b);
 	}
 
 	function initPlayer(game) {
@@ -56,7 +52,7 @@ angular.module('livewordsApp').controller('ChooseCtrl', function($rootScope, $sc
 		player.firstName = player.name.split(' ')[0];
 		
 		game.updatedBy = playerNumber;
-		addPlayerCss(player);
+		addPlayerColor(player);
 		
 		$rootScope.currentPlayer = player;
 

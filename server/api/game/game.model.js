@@ -12,6 +12,7 @@ var GameSchema = new Schema({
 	status : String,
 	winner : Number,
 	startTime : Date,
+	gameTime : Date,
 	boardType : {},
 	bagSize : String
 

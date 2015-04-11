@@ -14,8 +14,8 @@ Livewords.options = {
 			};
 		
 			
-			for (var row = 0; row < 15; row++) {
-				for (var col = 0; col < 15; col++) {
+			for (var row = 0; row < 8; row++) {
+				for (var col = 0; col < 8; col++) {
 					if (Math.random() > chance) {
 						var squareIndex = Math.floor(Math.random() * 100);
 						var squareType = '';
@@ -31,6 +31,9 @@ Livewords.options = {
 						}
 						
 						specialSquares[squareType].push([row, col]);
+						specialSquares[squareType].push([row, 14-col]);
+						specialSquares[squareType].push([14-row, col]);
+						specialSquares[squareType].push([14-row, 14-col]);
 					}
 
 				}

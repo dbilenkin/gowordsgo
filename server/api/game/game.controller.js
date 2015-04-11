@@ -75,6 +75,33 @@ exports.update = function(req, res) {
 	});
 };
 
+// Subtract existing tiles
+exports.leftoverTiles = function(req, res) {
+	if (req.body._id) {
+		delete req.body._id;
+	}
+	Game.findById(req.params.id, function(err, game) {
+		if (err) {
+			return handleError(res, err);
+		}
+		if (!game) {
+			return res.send(404);
+		}
+
+		var updatedBy = req.body.updatedBy;
+		var leftoverPoints = req.body.leftoverPoints;
+		game.players[updatedBy].score -= leftoverPoints;
+
+		game.save(function(err) {
+			if (err) {
+				return handleError(res, err);
+			}
+			return res.json(200);
+		});
+
+	});
+};
+
 // Swap out all tiles
 exports.swapTiles = function(req, res) {
 	if (req.body._id) {
@@ -91,12 +118,14 @@ exports.swapTiles = function(req, res) {
 		var newLetters = [];
 		var oldTiles = req.body.currentTiles;
 
-		for (var i = 0; i < oldTiles.length; i++) {
-			newLetters.push(getLetter(game.bag));
-		}
+		
 
 		for (var i = 0; i < oldTiles.length; i++) {
 			game.bag.push(oldTiles[i].letter);
+		}
+		
+		for (var i = 0; i < oldTiles.length; i++) {
+			newLetters.push(getLetter(game.bag));
 		}
 
 		game.version++;
@@ -170,6 +199,7 @@ exports.updateBoard = function(req, res) {
 		var clientVersion = req.body.gameVersion;
 		var updatedBy = req.body.updatedBy;
 		var score = req.body.score;
+		var gameTime = req.body.gameTime;
 
 		var placedTiles = req.body.placedTiles;
 		var conflict = false;
@@ -203,6 +233,7 @@ exports.updateBoard = function(req, res) {
 			game.players[updatedBy].score += score;
 			game.version++;
 			game.updatedBy = updatedBy;
+			game.gameTime = gameTime;
 
 			Game.update({
 				_id : game._id,
@@ -214,7 +245,8 @@ exports.updateBoard = function(req, res) {
 				bag : game.bag,
 				players : game.players,
 				status : game.status,
-				winner : game.winner
+				winner : game.winner,
+				gameTime : game.gameTime
 			}, {
 				multi : false
 			}, function(err, numberAffected, raw) {

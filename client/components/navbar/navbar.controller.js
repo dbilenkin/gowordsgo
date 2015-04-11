@@ -8,6 +8,9 @@ angular.module('livewordsApp')
     },{
     	'title': 'About',
     	'link':'/about'
+    },{
+    	'title': 'Rankings',
+    	'link':'/rankings'
     }];
 
     $scope.isCollapsed = true;

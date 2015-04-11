@@ -1,0 +1,54 @@
+<div class="container">
+	<div class="row">
+
+		<div class="col-sm-12">
+			<h3>Rankings</h3>
+
+			<tabset>
+				<tab heading="Speed">
+					<div class="games-container">
+						<table class="table table-striped">
+							<tr>
+								<th>Bag Size</th>
+								<th>Game Time</th>
+								<th>Player</th>
+							</tr>
+							<tr ng-repeat="game in speedGames">
+								<td>{{game.bagSize}}</td>
+								<td>{{game.gameTime | date:'mm:ss.sss'}}</td>
+								<td>{{game.players[game.winner].name}}</td>
+
+							</tr>
+						</table>
+					</div>
+				</tab>
+				<tab heading="Score">
+					<div class="games-container">
+						<table class="table table-striped">
+							<tr>
+								<th>Bag Size</th>
+								<th>Score</th>
+								<th>Player</th>
+							</tr>
+							<tr ng-repeat="game in scoreGames">
+								<td>{{game.bagSize}}</td>								
+								<td>{{game.players[game.winner].score}}</td>
+								<td>{{game.players[game.winner].name}}</td>
+
+							</tr>
+						</table>
+					</div>
+				</tab>
+				<tab heading="Tiles">
+					Long Labeled Justified content
+				</tab>
+			</tabset>
+
+		</div>
+
+	</div>
+
+<a type="button" class="btn btn-default" href="/"> <span class="glyphicon glyphicon-home" aria-hidden="true"></span> </a>
+
+</div>
+

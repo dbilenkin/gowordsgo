@@ -15,16 +15,15 @@
 					<th>Color</th>
 				</tr>
 				
-				<tr ng-class="{ready: player.ready}" ng-repeat="player in game.players">
+				<tr ng-class="{ready: player.ready}" ng-repeat="player in game.players track by $index">
 					<td ng-if="isCurrentPlayer(player)">
 						<input type="checkbox" ng-model="player.ready" ng-click="updateReady()">
 					</td>
 					<td ng-if="!isCurrentPlayer(player)">
-						<span ng-show="player.ready" class="glyphicon glyphicon-ok-sign"></span>
-						<span ng-hide="player.ready" class="glyphicon glyphicon-question-sign"></span>
+						<input type="checkbox" disabled="disabled" ng-model="player.ready">
 					</td>
 					<td>{{player.name}}</td>
-					<td>color</td>
+					<td><input class="colorpicker" id='colorpicker{{player.number}}' /></td>
 				</tr>
 			</table>
 

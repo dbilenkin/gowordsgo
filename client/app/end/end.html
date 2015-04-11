@@ -1,0 +1,29 @@
+<div class="container">
+	<div class="row">
+		
+		<div class="col-sm-12">
+			
+			<h5>Game Over</h5>
+			<div class="games-container">
+				<table class="table table-striped">
+
+					<tr ng-repeat="player in game.players">
+						<td>{{$index + 1}}</td>
+						<td>{{player.name}}</td>
+						<td>{{player.score}}</td>
+
+						
+					</tr>
+				</table>
+			</div>
+
+		</div>
+
+
+	</div>
+	<a type="button" class="btn btn-default" href="/"> <span class="glyphicon glyphicon-home" aria-hidden="true"></span> </a>
+
+</div>
+
+
+
